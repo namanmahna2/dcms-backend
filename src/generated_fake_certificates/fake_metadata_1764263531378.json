@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://dcms.org/schema/degree-v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "DegreeCredential"
+  ],
+  "id": "did:dcms:token:73649",
+  "issuer": {
+    "id": "did:dcms:university:coventry",
+    "name": "Coventry University",
+    "wallet": "0x333dfb6Faa2b73B72F01C9Dc34BDaa231335b13B",
+    "issuedDate": "2025-11-27T17:12:11.378Z"
+  },
+  "credentialSubject": {
+    "id": "did:dcms:student:fake-1764263531378",
+    "studentName": "John Wick",
+    "course": "MSc Cybersecurity",
+    "degree": "MSc Cybersecurity",
+    "tokenId": 73649,
+    "walletAddress": "0xFAKE000000000000000000000000000000000000",
+    "imageCID": "ipfs://fake-image-does-not-exist",
+    "imageHash": "655816de6def4ca87dee2d4e8cd8fe558307f0c881c4dc2b255d8114072065c2",
+    "metadataHash": "7c1583c6308e345ad2b03ebfb43a208900cf337f103ae89fc7efc4499594de96"
+  },
+  "blockchain": {
+    "network": "Ganache",
+    "contract": "0x3CA339C60a346167F4c053f43208a25a3FC5A7D9"
+  },
+  "verification": {
+    "verifyUrl": "http://127.0.0.1:3011/cr/v1/verify/73649"
+  },
+  "proof": {
+    "type": "EcdsaSecp256k1Signature2020",
+    "created": "2025-11-27T17:12:11.378Z",
+    "verificationMethod": "0x333dfb6Faa2b73B72F01C9Dc34BDaa231335b13B",
+    "proofPurpose": "assertionMethod",
+    "signature": "0x8daa10b00774398d84c5dc58d43d0cf65a72e6f90f4b8d6eb36040fff25e75dcc5b7af30f991c6809709455b73fd816f9815545c3ee1f6f3e684bcc3721199f27c"
+  }
+}

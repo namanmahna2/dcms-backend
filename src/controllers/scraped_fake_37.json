@@ -1,0 +1,35 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://dcms.org/schema/degree-v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "DegreeCredential"
+  ],
+  "id": "did:dcms:token:37",
+  "issuer": {
+    "id": "did:dcms:university:coventry",
+    "name": "Hacked University",
+    "wallet": "0x333dfb6Faa2b73B72F01C9Dc34BDaa231335b13B",
+    "issuedDate": "2025-11-27T18:02:12.378Z"
+  },
+  "credentialSubject": {
+    "id": "did:dcms:student:64",
+    "studentName": "Fake Hacker",
+    "course": "Digital Signal Processing",
+    "degree": "Digital Signal Processing",
+    "tokenId": 37,
+    "walletAddress": "0x7a60aebae0A667a34C15bfa5F07fCdB0E7de0C39",
+    "metadataHash": "711670565807dc0828debd069e2c9e842414f48decf445c21fa1312b5ae03c94",
+    "imageCID": "ipfs://bafybeiejalykg7apyo33rtafmfdilo4cbe6dt7iom7klgmhyrlp65jfpra",
+    "imageHash": "d3914bbb1621aa5d070fd45778296f419caca98bc87bdcdd558114c8e9d5144b"
+  },
+  "blockchain": {
+    "network": "Ganache",
+    "contract": "0x3CA339C60a346167F4c053f43208a25a3FC5A7D9"
+  },
+  "verification": {
+    "verifyUrl": "127.0.0.1:3011/cr/v1/verify/37"
+  }
+}

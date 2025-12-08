@@ -1,6 +1,6 @@
 const joi = require("joi")
 
-const forbidOperatorKey = joi.object().pattern(/^\$|\\./, Joi.forbidden())
+const forbidOperatorKey = joi.object().pattern(/^\$|\\./, joi.forbidden())
 
 
 const signupJoi = joi.object({
@@ -8,10 +8,17 @@ const signupJoi = joi.object({
     lastName: joi.string().required(),
     email: joi.string().required(),
     password: joi.string().required(),
-    walletAddress: joi.string().optional()
+    walletAddress: joi.string().optional(),
+    phone: joi.string().optional(),
+    role: joi.string().optional()
+})
+const signinJoi = joi.object({
+    email: joi.string().required(),
+    password: joi.string().required(),
 })
 
 
 module.exports = {
-    signupJoi
+    signupJoi,
+    signinJoi
 }

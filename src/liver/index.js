@@ -1,13 +1,14 @@
 const app = require("../app")
 
 const http = require("http")
+const { initSocket } = require("../services/sockets")
 
-
-const PORT = process.env.PORT || 3010;
+const PORT = process.env.PORT || 3011;
 
 app.set("port", PORT)
 
 const server = http.createServer(app)
+initSocket(server)
 
 server.listen(PORT)
 server.on("error", onError)

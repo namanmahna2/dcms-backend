@@ -1,17 +1,17 @@
 const table_name = "dcms_users";
 exports.up = function (knex) {
 
-    return knex.schema.createTbale(table_name, (table) => {
+    return knex.schema.createTable(table_name, (table) => {
         table.increments("id").primary();
         table.string("first_name", 100).notNullable();
-        table.string("last_anme");
+        table.string("last_name");
         table.string("email", 255).notNullable().unique();
         table.string("phone").notNullable().unique();
         table.string("wallet_address", 42).unique();
         table.string("password").notNullable();
         table.enu(
             "role",
-            ["student", "issuer", "verifier", "admin"],
+            ["student", "verifier", "admin"],
             {
                 useNative: true,
                 enumName: "user_role"

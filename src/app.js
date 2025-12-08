@@ -14,7 +14,65 @@ const helmet = require("helmet")
 const app = express();
 
 // Routes
-// const users = require()
+const index = require("./routes/index")
+const users = require("./routes/users")
+const students = require("./routes/students")
+const courses_departments = require("./routes/courses_departments")
+const certificates = require("./routes/certificates")
+const logs = require("./routes/logs")
+
+// models
+const blocker_ips_model = require("./models/pgsql/blocked_ips")
+
+
+const allowedOrigins = ["http://localhost:3000"];
+app.use(
+    cors({
+        origin: function (origin, callback) {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) return callback(null, true);
+            else return callback(new Error("Not allowed by CORS"));
+        },
+        credentials: true,
+    })
+);
+
+app.use(async (req, res, next) => {
+    try {
+        const getClientIp = (req) => {
+            return (
+                req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
+                req.connection?.remoteAddress ||
+                req.socket?.remoteAddress ||
+                req.connection?.socket?.remoteAddress ||
+                req.ip
+            );
+        };
+
+        const ip = getClientIp(req);
+        console.log("ip", ip)
+        // Query DB for IP
+        let record = await blocker_ips_model.blocked_ips({ ip })
+        console.log("record", record)
+        record = record[0]
+        if (record) {
+            console.log(`BLOCKED REQUEST from ${ip} (ID: ${record.id})`);
+
+            return res.status(403).json({
+                success: false,
+                message: "Access denied. Your IP has been blocked.",
+            });
+        }
+
+        next();
+    } catch (err) {
+        console.error("IP block check error:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error during IP validation",
+        });
+    }
+});
 
 app.use(express.json())
 app.use(compression())
@@ -53,7 +111,12 @@ app.use(
 )
 
 // Routes
-// app.use()
+app.use("/index", index)
+app.use("/users", users)
+app.use("/students", students)
+app.use("/dc", courses_departments)
+app.use("/cr", certificates)
+app.use("/bl_ch", logs)
 
 
 
@@ -65,21 +128,6 @@ app.use((req, res, next) => {
     res.setHeader('Surrogate-Control', 'no-store');
     next();
 });
-
-const allowedOrigins = [
-    "http://localhost:300"
-]
-
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin) return callback(null, true)
-            if (allowedOrigins.includes(origin)) return callback(null, true)
-            else return callback(new Error("Not allowed by CORS"))
-        },
-        credentials: true
-    })
-)
 
 app.use(function (req, res, next) {
     let err = new Error("Not Found");
@@ -99,5 +147,6 @@ app.use(function (err, req, res, next) {
         error: res.locals.error
     });
 });
+
 
 module.exports = app;

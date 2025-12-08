@@ -1,6 +1,13 @@
-const knex = require("knex")
-const knexConfig = require("../../../knexfile")
+const knex = require('knex');
+const knexfile = require('../../../knexfile');
 
-const db = knex(knexConfig)
+const environment = knexfile.DB_ENV || 'development';
+const config = knexfile[environment];
 
-module.exports = db
+if (!config || !config.client) {
+  throw new Error(`Knex configuration missing for environment: ${environment}`);
+}
+
+const db = knex(config);
+
+module.exports = db;
