@@ -806,6 +806,7 @@ const generate_fake_degree = async (data, response, cb) => {
 
         const imageBuffer = await renderCertificateWithQR({
             studentName,
+            ownerName:"Naman Mahna",
             degreeName: course,
             issuerName: issuer,
             issueDate: "01 January 2025",

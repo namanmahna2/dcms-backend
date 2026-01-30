@@ -20,7 +20,7 @@ async function simulateSybilAttack(data, response, cb) {
     if (typeof cb !== "function") cb = response;
 
     try {
-        const times = Number(data?.times) || 0;
+        const times = Number(data?.times) || 10;
         if (times <= 0) {
             return cb(
                 null,
