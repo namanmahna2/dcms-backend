@@ -1,19 +1,19 @@
+require("dotenv").config()
 const mqtt = require("mqtt");
 const { getIO } = require("../../../services/sockets")
 
-const client = mqtt.connect("mqtt://localhost:1883");
+const client = mqtt.connect(process.env.MQTT_HOST);
 const security_alerts_model = require("../../../models/pgsql/security_alerts");
-
 client.on("connect", () => {
     console.log("⚡ MQTT connected (Node.js)");
 
-    client.subscribe("anomaly_result", (err) => {
-        if (err) {
-            console.error("Subscription error:", err);
-        } else {
-            console.log("Listening on topic: anomaly_result");
-        }
-    });
+client.subscribe("anomaly_result", (err) => {
+    if (err) {
+        console.error("Subscription error:", err);
+    } else {
+        console.log("Listening on topic: anomaly_result");
+    }
+});
 });
 
 client.on("message", async (topic, message) => {

@@ -31,7 +31,7 @@ const insert = async (data) => {
     try {
         const resolved_type = data.type || "contract_call_anomaly"
 
-        if (!data.ip) throw ("ip is required")
+        // if (!data.ip) throw ("ip is required")
 
         let query = db(table).insert({
             type: resolved_type,
@@ -40,7 +40,7 @@ const insert = async (data) => {
             anomaly_score: data.score,
             details: JSON.stringify(data.tx) || null,
             handled: data.handled ?? false,
-            client_ip: data.ip,
+            client_ip: data.ip || "127.0.0.1",
             ...(data.issuer_id && { issuer_id: data.issuer_id }),
             ...(data.student_id && { student_id: data.student_id }),
         }).returning(["id"])

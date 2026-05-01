@@ -2,6 +2,7 @@
 # Dependencies
 # --------------------
 node_modules/
+k8/
 
 # --------------------
 # Logs

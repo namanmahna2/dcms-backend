@@ -5,10 +5,14 @@ const blockchain_txn_model = require("../../models/pgsql/blockchain_txn")
 
 const ano_detection_queue = new Bull(`logs_${process.env.DB_ENV}`, {
     redis: {
-        host: 'redis-12148.c262.us-east-1-3.ec2.cloud.redislabs.com',
-        port: 12148,
-        username: 'default',
-        password: 'ZzPUAS6ltKNBgFpsM33pYU3s1uDvadHb',
+        // host: "redis-19514.c11.us-east-1-2.ec2.cloud.redislabs.com",
+        // port: 19514,
+        // username: "naman",
+        // password: "Naman@1234",
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        username: process.env.REDIS_USER,
+        password: process.env.REDIS_PASS,
     },
     defaultJobOptions: {
         removeOnComplete: true,
@@ -22,6 +26,31 @@ const ano_detection_queue = new Bull(`logs_${process.env.DB_ENV}`, {
         retryProcessDelay: 5000
     }
 });
+
+// const ano_detection_queue = new Bull(`logs_${process.env.DB_ENV}`, {
+//   redis: {
+//     sentinels: [
+//       {
+//         host: process.env.REDIS_SENTINEL_HOST,
+//         port: process.env.REDIS_SENTINEL_PORT,
+//       }
+//     ],
+//     name: process.env.REDIS_MASTER_NAME,
+//     password: process.env.REDIS_PASS,
+//     db: Number(process.env.REDIS_DB_NAME)
+//   },
+//   defaultJobOptions: {
+//     removeOnComplete: true,
+//     removeOnFail: true
+//   },
+//   settings: {
+//     lockDuration: 30000,
+//     stalledInterval: 30000,
+//     maxStalledCount: 1,
+//     guardInterval: 5000,
+//     retryProcessDelay: 5000
+//   }
+// });
 
 
 ano_detection_queue.process(async (job, done) => {

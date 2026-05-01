@@ -1,1 +1,54 @@
+# Node modules
 node_modules
+npm-debug.log
+yarn-error.log
+
+# Git
+.git
+.gitignore
+
+# Environment & secrets
+.env
+.env.*
+private.pem
+*.pem
+
+# Logs
+logs
+*.log
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Build / coverage
+coverage
+dist
+build
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Kubernetes / deployment configs
+k8/
+deployment.yml
+
+# Generated files
+src/generated_certificates/
+src/generated_fake_certificates/
+
+# Public static files that aren't needed at runtime
+public/*.pem
+
+# Database / cache
+tmp/
+.cache/
+
+# Seeds
+seeds/
+
+# README
+README.md

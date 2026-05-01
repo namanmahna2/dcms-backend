@@ -4,7 +4,6 @@ const table = "blocked_ips"
 
 const insert = async (data) => {
     try {
-        console.log("incoming data for insertion in blocked_ips", data)
         let insert_obj = {
             ip_address: data.ip_address,
             reason: data.reason,

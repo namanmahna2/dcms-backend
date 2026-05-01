@@ -29,7 +29,6 @@ const fetchUserDetails = async (data) => {
 const insertUser = async (data, keyInfo = {}) => {
     try {
         if (keyInfo.hasOwnProperty("ownTrx")) {
-            console.log("data for insertion", data)
             const result = await keyInfo.trx(table)
                 .insert(data)
                 .returning(["id"])

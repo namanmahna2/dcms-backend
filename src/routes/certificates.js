@@ -6,7 +6,8 @@ const fs = require("fs");
 const { pinFile, pinJSON } = require("../services/ipfs");
 const { contract } = require("../blockchain/certificates");
 
-const upload = multer({ dest: path.join(__dirname, "../../../uploads") });
+// const upload = multer({ dest: path.join(__dirname, "../../../uploads") });
+const upload = multer({ dest: path.join(__dirname, "uploads") });
 
 const certificate_controller = require("../controllers/certificates");
 const attack_controller = require("../controllers/attacks");
@@ -65,6 +66,23 @@ router.get("/v1/view", [authenticator, isAdmin], async (req, res) => {
 });
 
 router.patch("/v1/revoke/:id", [authenticator, isAdmin], async (req, res) => {
+    let data = { ...req.params, ...req.body }
+    data.req = req.data
+
+    certificate_controller.revoke_degree(data, (error, result) => {
+        let status = 0
+
+        if (error) {
+            status = error.status
+            return res.status(status).send(error)
+        } else {
+            status = result.status
+            return res.status(status).send(result)
+        }
+    })
+});
+
+router.patch("/v1/revoke/email/:email", [authenticator, isAdmin], async (req, res) => {
     let data = { ...req.params }
     data.req = req.data
 

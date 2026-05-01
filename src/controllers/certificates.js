@@ -2,19 +2,19 @@ const mute = require("immutable");
 const path = require("path");
 const moment = require("moment");
 const fs = require("fs");
-const { ethers } = require("ethers");
+const { ethers, id } = require("ethers");
 const crypto = require("crypto");
 const axios = require("axios")
+const validator = require("validator")
 
 // MODELS + SERVICES
 const student_model = require("../models/pgsql/students");
 const { renderCertificateNoQR } = require("../utils/certificateWithNoQR");
 const { renderCertificateWithQR } = require("../utils/certificatesRender");
-const { issueDegree, revokeDegree_ } = require("./common");
+const { issueDegree, revokeDegree_, normaliseTransaction } = require("./common");
 const { uploadFileToPinata, uploadJSONToPinata } = require("../services/ipfs");
 const ano_detection_queue = require("../utils/queues/anamoly_detection");
 const { contract } = require("../blockchain/certificates");
-
 
 const responseStruct = new mute.Map({
     signature: "",
@@ -38,6 +38,18 @@ const generate_degree = async (data, response, cb) => {
                     status: 404,
                     success: false,
                     message: "Student not found"
+                }).toJS()
+            );
+        }
+        else if (student_details?.tx_hash) {
+            console.log("db data", student_details)
+            console.log("hi here is culprit")
+            return cb(
+                responseStruct.merge({
+                    signature: "sign11",
+                    status: 400,
+                    success: false,
+                    message: "Degree already issued to student"
                 }).toJS()
             );
         }
@@ -187,7 +199,7 @@ const generate_degree = async (data, response, cb) => {
 
         await ano_detection_queue.ano_detection_queue.add(
             {
-                info: JSON.stringify({
+                info: JSON.stringify(normaliseTransaction({
                     degree_token_id: Number(degreeReceipt.tokenIdMinted),
                     wallet: student_details.wallet_address,
                     tx_hash: transactionHash,
@@ -201,7 +213,7 @@ const generate_degree = async (data, response, cb) => {
                     student_id: data.student_id,
                     issuer_id: data.req.user_id,
                     ip: data.req.client_ip
-                })
+                }))
             },
             { delay: 300 }
         );
@@ -457,15 +469,19 @@ const revoke_degree = async (data, response, cb) => {
     if (!cb) cb = response;
 
     try {
-        // Get full student record
-        const student = (await student_model.get_by_id({ id: data.id })).rows[0];
+        let student
+
+        if (data.hasOwnProperty("email") && validator.isEmail(data.email)) {
+            student = (await student_model.get_by_email({ email: data.email })).rows[0];
+        } else {
+            student = (await student_model.get_by_id({ id: data.id })).rows[0];
+        }
 
         const tokenId = Number(student.degree_token_id);
         const wallet = student.wallet_address;
 
-        // 1. Check on-chain revocation
+        // Check on-chain revocation
         const is_revoked_onchain = await contract.isRevoked(tokenId);
-        console.log("revoked on-chain:", is_revoked_onchain);
 
         if (is_revoked_onchain) {
             return cb(
@@ -477,8 +493,13 @@ const revoke_degree = async (data, response, cb) => {
             );
         }
 
-        // 2. Perform revocation  
-        const result = await revokeDegree_({ id: data.id });
+        // Perform revocation DB
+        let db_id = data.id || student.id
+        const result = await revokeDegree_({
+            id: db_id,
+            ip: data.req.client_ip,
+            reason: data.reason || ""
+        });
 
         if (!result) {
             return cb(
@@ -512,12 +533,13 @@ const revoke_degree = async (data, response, cb) => {
     }
 };
 
+
 const verify_degree = async (data, response, cb) => {
     if (!cb) cb = response;
 
     try {
         // STEP 1 — RESOLVE TOKEN ID
-       
+
         let tokenID;
 
         if (data.token_id) {
@@ -536,7 +558,7 @@ const verify_degree = async (data, response, cb) => {
 
             tokenID = student.degree_token_id;
         }
-        
+
         // STEP 2 — LOAD REAL TOKEN URI
         const tokenURI = await contract.tokenURI(tokenID);
 
@@ -806,7 +828,7 @@ const generate_fake_degree = async (data, response, cb) => {
 
         const imageBuffer = await renderCertificateWithQR({
             studentName,
-            ownerName:"Naman Mahna",
+            ownerName: "Naman Mahna",
             degreeName: course,
             issuerName: issuer,
             issueDate: "01 January 2025",

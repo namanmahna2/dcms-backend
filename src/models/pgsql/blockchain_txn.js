@@ -1,4 +1,5 @@
 const db = require("./index")
+const moment = require("moment")
 
 const table = "ml_transactions"
 
@@ -6,9 +7,9 @@ const insert = async (data) => {
     try {
         const query = await db(table).insert({
             degree_token_id: data.degree_token_id || 0,
-            wallet: data.wallet,
+            wallet: data.wallet ?? data.wallet_id,
             tx_hash: data.tx_hash,
-            timestamp: data.timestamp,
+            timestamp: moment(data.timestamp).valueOf(),
             gas_price: data.gas_price,
             gas_used: data.gas_used,
             block_number: data.block_number || 1000,

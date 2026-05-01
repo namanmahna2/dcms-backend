@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://dcms.org/schema/degree-v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "DegreeCredential"
+  ],
+  "id": "did:dcms:token:5",
+  "issuer": {
+    "id": "did:dcms:university:coventry",
+    "name": "Coventry University",
+    "wallet": "0x333dfb6Faa2b73B72F01C9Dc34BDaa231335b13B",
+    "issuedDate": "2026-03-06T14:09:53.592Z"
+  },
+  "credentialSubject": {
+    "id": "did:dcms:student:fake-1772806193592",
+    "studentName": "nikita mahna",
+    "course": "operating systems",
+    "degree": "operating systems",
+    "tokenId": 5,
+    "walletAddress": "0xFAKE000000000000000000000000000000000000",
+    "imageCID": "ipfs://fake-image-does-not-exist",
+    "imageHash": "b0601ca3f4ff005821726b676628abc91d049a829163bc0ead7abae52dbb3a5a",
+    "metadataHash": "36eb4985a34f9a5936c9f41bedd529857152617e60141c5137deb869ac7c05ce"
+  },
+  "blockchain": {
+    "network": "Ganache",
+    "contract": "0xbdd1e830815d4df41d4b7af6d4a81962e92514ed"
+  },
+  "verification": {
+    "verifyUrl": "http://127.0.0.1:3011/cr/v1/verify/5"
+  },
+  "proof": {
+    "type": "EcdsaSecp256k1Signature2020",
+    "created": "2026-03-06T14:09:53.592Z",
+    "verificationMethod": "0x333dfb6Faa2b73B72F01C9Dc34BDaa231335b13B",
+    "proofPurpose": "assertionMethod",
+    "signature": "0xe0224c218386baa39769d2432de0d6fcfef06f8850290f7ded30e117250ae418512e2f2c3d65190c256af4e622cda774d206a0109326643e06ca6caaca5a7f9edc"
+  }
+}

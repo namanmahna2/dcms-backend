@@ -25,18 +25,18 @@ const logs = require("./routes/logs")
 const blocker_ips_model = require("./models/pgsql/blocked_ips")
 
 
-const allowedOrigins = ["http://localhost:3000"];
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.includes(origin)) return callback(null, true);
-            else return callback(new Error("Not allowed by CORS"));
-        },
-        credentials: true,
-    })
-);
-
+// const allowedOrigins = ["http://localhost:3000"];
+// app.use(
+//     cors({
+//         origin: function (origin, callback) {
+//             if (!origin) return callback(null, true);
+//             if (allowedOrigins.includes(origin)) return callback(null, true);
+//             else return callback(new Error("Not allowed by CORS"));
+//         },
+//         credentials: true,
+//     })
+// );
+app.use(cors({ origin: true, credentials: true }));
 app.use(async (req, res, next) => {
     try {
         const getClientIp = (req) => {
@@ -53,7 +53,7 @@ app.use(async (req, res, next) => {
         console.log("ip", ip)
         // Query DB for IP
         let record = await blocker_ips_model.blocked_ips({ ip })
-        console.log("record", record)
+
         record = record[0]
         if (record) {
             console.log(`BLOCKED REQUEST from ${ip} (ID: ${record.id})`);
@@ -77,30 +77,34 @@ app.use(async (req, res, next) => {
 app.use(express.json())
 app.use(compression())
 app.use(express.urlencoded({ extended: true }))
-app.use(
-    helmet({
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'"],
-                objectSrc: ["'none'"],
-                upgradeInsecureRequests: [],
-            }
-        },
-        frameguard: { action: 'deny' },          // X-Frame-Options
-        hsts: { maxAge: 63072000, includeSubDomains: true, preload: true }, // Strict-Transport-Security
-        noSniff: true,                            // X-Content-Type-Options
-        xssFilter: true,                          // X-XSS-Protection
-        referrerPolicy: { policy: 'no-referrer' },
-        permissionsPolicy: {
-            features: {
-                camera: ["'none'"],
-                microphone: ["'none'"],
-                geolocation: ["'none'"]
-            }
-        }
-    })
-)
+// app.use(
+//     helmet({
+//         contentSecurityPolicy: {
+//             directives: {
+//                 defaultSrc: ["'self'"],
+//                 scriptSrc: ["'self'", "'unsafe-inline'"],
+//                 objectSrc: ["'none'"],
+//                 upgradeInsecureRequests: [],
+//             }
+//         },
+//         frameguard: { action: 'deny' },          // X-Frame-Options
+//         hsts: { maxAge: 63072000, includeSubDomains: true, preload: true }, // Strict-Transport-Security
+//         noSniff: true,                            // X-Content-Type-Options
+//         xssFilter: true,                          // X-XSS-Protection
+//         referrerPolicy: { policy: 'no-referrer' },
+//         permissionsPolicy: {
+//             features: {
+//                 camera: ["'none'"],
+//                 microphone: ["'none'"],
+//                 geolocation: ["'none'"]
+//             }
+//         }
+//     })
+// )
+
+app.use(helmet({
+    contentSecurityPolicy: false
+}))
 
 app.use(cookie_parser())
 
@@ -111,12 +115,12 @@ app.use(
 )
 
 // Routes
-app.use("/index", index)
-app.use("/users", users)
-app.use("/students", students)
-app.use("/dc", courses_departments)
-app.use("/cr", certificates)
-app.use("/bl_ch", logs)
+app.use("/api/index", index)
+app.use("/api/users", users)
+app.use("/api/students", students)
+app.use("/api/dc", courses_departments)
+app.use("/api/cr", certificates)
+app.use("/api/bl_ch", logs)
 
 
 

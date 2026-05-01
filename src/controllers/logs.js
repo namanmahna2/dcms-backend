@@ -285,6 +285,7 @@ const block_ip = async (data, response, cb) => {
 };
 
 const student_alerts = async (data, response, cb) => {
+    console.log("hi")
     if (typeof cb !== "function") cb = response
     try {
         const db_result = await bl_tx_model.fetch_log_related_to_student({ user_id: data.req.user_id })

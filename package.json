@@ -17,6 +17,9 @@
   "scripts": {
     "start": "node src/liver/index.js",
     "dev": "nodemon src/liver/index.js",
+    "docker:build": "docker build --no-cache -t dcms-nodejs-backend .",
+    "kubectl:apply": "kubectl apply -f k8/deployment.yml",
+    "kubectl:redeploy": "kubectl rollout restart deployment dcms-backend-deploy",
     "migrate:dev": "DB_ENV=development npx knex migrate:latest --env=development",
     "migrate:prod": "DB_ENV=production npx knex migrate:latest --env=production"
   },
@@ -33,6 +36,7 @@
     "ethers": "^6.15.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "immutable": "^5.1.5",
     "ioredis": "^5.8.2",
     "jimp": "^1.6.0",
     "joi": "^18.0.1",
@@ -41,6 +45,7 @@
     "moment": "^2.30.1",
     "morgan": "^1.10.1",
     "mqtt": "^5.14.1",
+    "multer": "^2.1.1",
     "nodemon": "^3.1.10",
     "pdf-lib": "^1.17.1",
     "pg": "^8.16.3",

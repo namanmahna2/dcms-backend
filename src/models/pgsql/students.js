@@ -63,6 +63,7 @@ const get_all = async (data) => {
 
 
 const get_by_id = async (data) => {
+    console.log("no way!!!!!!!!!!")
     try {
         let query = db.raw(`
             SELECT 
@@ -91,6 +92,39 @@ const get_by_id = async (data) => {
             where ds.id = ${data.id}`)
 
 
+        return await query
+    } catch (error) {
+        throw error
+    }
+}
+
+const get_by_email = async (data) => {
+    try {
+        let query = db.raw(`
+            SELECT 
+            ds.id,
+            ds.first_name,
+            ds.last_name,
+            ds.wallet_address,
+            ds.degree_token_id,
+            ds.tx_hash,
+            ds.university_name as uni,
+            ds.email,
+            dd.id as department_id,
+            dd.name as department_name,
+            du.phone as phone,
+            ds.course_name as course_code,
+            dw.custody as wallet_type,
+            dc.name as course_name,
+            (select concat(du.first_name, ' ', du.last_name) as owner_name from dcms_users as du where du.role = 'admin')
+            from dcms_students as ds
+
+            left join dcms_departments as dd on dd.id = ds.department :: int
+            left join dcms_users as du on du.student_id = ds.id
+            left join dcms_courses as dc on ds.course_name = dc.code
+            left join dcms_wallets as dw on dw.user_id = du.id
+
+            where ds.email = ?`,[data.email])
         return await query
     } catch (error) {
         throw error
@@ -318,6 +352,7 @@ module.exports = {
     insert,
     get_all,
     get_by_id,
+    get_by_email,
     update_by_id,
     delete_by_id,
     update_by_stuID,

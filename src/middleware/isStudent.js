@@ -9,7 +9,6 @@ module.exports = (req, res, next) => {
         return res.status(500).json({
             message: "Authorised only for students",
             success: false,
-            error: error.message || error
         });
     }
 }

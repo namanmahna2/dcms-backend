@@ -1,5 +1,6 @@
 const { contract, isRevoked } = require("../blockchain/certificates")
 const { passworHash } = require("../utils/helper")
+const crypto = require("crypto")
 
 // Models
 const user_model = require("../models/pgsql/users")
@@ -118,6 +119,7 @@ const revokeDegree_ = async (data) => {
 
         RevokeDegree = await RevokeDegree.wait()
 
+        console.log("incoming data revoke_degree ->>>> ", data)
         const updateDb = await student_model.update_by_id(
             {
                 student: {
@@ -130,6 +132,7 @@ const revokeDegree_ = async (data) => {
             })
 
         const tx_data = {
+            ip: data.ip,
             degree_token_id: Number(db_result[0].degree_token_id),
             wallet: db_result[0].wallet_address,
             tx_hash: RevokeDegree.hash,
@@ -140,7 +143,7 @@ const revokeDegree_ = async (data) => {
             // block_time_diff,
             nonce: Number(RevokeDegree.nonce),
             function: "revokeDegree",
-            // metadata_cid: imageCID,
+            // metadata_cid: imageCID
         }
 
         await ano_detection_queue.add(
@@ -171,6 +174,29 @@ const inactive_session = async (data) => {
     }
 }
 
+const normaliseTransaction = (raw) => {
+    return {
+        event_id: crypto.randomUUID(),
+
+        wallet_id: raw.wallet?.toLowerCase() || "unknown",
+
+        gas_price: Number(raw.gas_price) || 0,
+        gas_used: Number(raw.gas_used) || 0,
+
+        tx_hash: raw.tx_hash || null,
+
+        metadata_id: raw.metadata_cid || null,
+        metadata_size: Number(raw.metadata_size) || 0,
+
+        timestamp: new Date(raw.timestamp || Date.now()).toISOString(),
+
+        issuer_id: raw.issuer_id || null,
+        source_ip: raw.ip || null,
+
+        event_type: "blockchain_tx"
+    }
+}
+
 
 module.exports = {
     is_already_user,
@@ -179,5 +205,6 @@ module.exports = {
     check_if_degree_issued,
     getBlockTimestamp,
     revokeDegree_,
-    inactive_session
+    inactive_session,
+    normaliseTransaction
 }
